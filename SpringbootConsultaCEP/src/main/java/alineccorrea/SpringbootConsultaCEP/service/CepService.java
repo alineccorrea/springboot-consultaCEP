@@ -1,7 +1,6 @@
 package alineccorrea.SpringbootConsultaCEP.service;
 
-import alineccorrea.SpringbootConsultaCEP.Cep;
-import alineccorrea.SpringbootConsultaCEP.exceptions.BadRequestException;
+import alineccorrea.SpringbootConsultaCEP.dto.CepDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -9,18 +8,18 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class CepService {
 
-    public boolean deleteCepFromCache(String cep) {
-        return Cep.deleteCepFromCache(cep);
-    }
-
-    public Cep getFromViaCepApi(String cepInput) throws Exception {
+    public CepDTO getFromViaCepApi(String cepInput) {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Cep> resp =
+        ResponseEntity<CepDTO> resp =
                 restTemplate
                         .getForEntity(
                                 String.format("https://viacep.com.br/ws/%s/json/", cepInput),
-                                Cep.class);
-        Cep.saveCepInCache((Cep) resp.getBody());
+                                CepDTO.class);
+        CepDTO.saveCepInCache((CepDTO) resp.getBody());
         return resp.getBody();
+    }
+
+    public boolean deleteCepFromCache(String cep) {
+        return CepDTO.deleteCepFromCache(cep);
     }
 }
